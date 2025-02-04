@@ -8,8 +8,12 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-100 p-4">
         <nav className="flex justify-between p-4 bg-white shadow-md rounded-lg">
-          <Link to="/" className="text-xl font-bold">Users</Link>
-          <Link to="/saved" className="text-lg">Saved Users</Link>
+          <Link to="/" className="text-xl font-bold">
+            Users
+          </Link>
+          <Link to="/saved" className="text-lg">
+            Saved Users
+          </Link>
         </nav>
         <Routes>
           <Route path="/" element={<Home />} />

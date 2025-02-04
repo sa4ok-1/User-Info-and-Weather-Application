@@ -1,35 +1,28 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaSun, FaSnowflake } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import Map from "./Map";
+import { fetchWeather } from "../services/api";
+import { saveUserToLocalStorage } from "../services/localStorage";
 
-const UserCard = ({ user, saved = false }) => {
+const UserCard = ({ user, onRemove, saved = false }) => {
   const [weather, setWeather] = useState(null);
   const [showWeather, setShowWeather] = useState(false);
 
-  const fetchWeather = async () => {
-    const { latitude, longitude } = user.location.coordinates;
-    const response = await axios.get(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-    );
-    setWeather(response.data.current_weather);
-  };
-
   useEffect(() => {
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 300000);
+    const { latitude, longitude } = user.location.coordinates;
+    fetchWeather(latitude, longitude).then(setWeather);
+
+    const interval = setInterval(() => {
+      fetchWeather(latitude, longitude).then(setWeather);
+    }, 300000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [user.location.coordinates]);
 
   const saveUser = () => {
-    const savedUsers = JSON.parse(localStorage.getItem("savedUsers")) || [];
-    localStorage.setItem("savedUsers", JSON.stringify([...savedUsers, user]));
+    saveUserToLocalStorage(user);
   };
-
-  const { latitude, longitude } = user.location.coordinates;
-  console.log("Latitude:", latitude, "Longitude:", longitude);
 
   const renderWeatherIcon = (temperature) => {
     const iconSize = 25;
@@ -56,12 +49,6 @@ const UserCard = ({ user, saved = false }) => {
       <p className="text-center">
         {user.location.city}, {user.location.country}
       </p>
-      {weather && (
-        <div className="text-center flex items-center justify-center">
-          {renderWeatherIcon(weather.temperature)}
-          <p className="ml-2">{weather.temperature}°C</p>
-        </div>
-      )}
       <div className="mt-4 flex justify-between">
         {!saved && (
           <button
@@ -79,12 +66,27 @@ const UserCard = ({ user, saved = false }) => {
         </button>
       </div>
       {showWeather && weather && (
-        <div className="mt-4 bg-gray-100 p-4 rounded">
-          <p>Temperature: {weather.temperature}°C</p>
+        <div className="mt-4 bg-gray-100 p-4 rounded flex flex-col items-center">
+          <p className="flex items-center">
+            Temperature: {weather.temperature}°C{" "}
+            <span className="ml-2">
+              {renderWeatherIcon(weather.temperature)}
+            </span>
+          </p>
+
           <p>Wind Speed: {weather.windspeed} km/h</p>
         </div>
       )}
-      <Map latitude={latitude} longitude={longitude} user={user} />
+
+      {saved && (
+        <button
+          onClick={onRemove}
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-full w-full hover:bg-red-600"
+        >
+          Remove
+        </button>
+      )}
+      <Map user={user} />
     </div>
   );
 };
