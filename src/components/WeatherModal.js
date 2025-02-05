@@ -10,7 +10,6 @@ const WeatherModal = ({ weather, isOpen, onClose }) => {
           Weather Details
         </h2>
 
-        {/* Weather icon */}
         <div className="flex flex-col items-center">
           <img
             src={`https://openweathermap.org/img/wn/${weather.icon}.png`}
@@ -20,7 +19,6 @@ const WeatherModal = ({ weather, isOpen, onClose }) => {
           <p className="text-lg font-bold">{weather.condition}</p>
         </div>
 
-        {/* Temperature */}
         <div className="mt-4">
           <p>
             <strong>Temperature:</strong> {weather.current}°C
@@ -33,7 +31,6 @@ const WeatherModal = ({ weather, isOpen, onClose }) => {
           </p>
         </div>
 
-        {/* Close button */}
         <button
           className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           onClick={onClose}

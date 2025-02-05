@@ -7,7 +7,7 @@ const Home = () => {
 
   const loadMoreUsers = async () => {
     const newUsers = await fetchUsers();
-    setUsers((prevUsers) => [...prevUsers, ...newUsers]);
+    setUsers(newUsers); 
   };
 
   useEffect(() => {
@@ -17,8 +17,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-blue-50 p-4 flex flex-col items-center">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user, index) => (
-          <UserCard key={index} user={user} />
+        {users.map((user) => (
+          <UserCard key={user.id} user={user} />
         ))}
       </div>
       <div className="flex justify-center mt-6 w-full">
